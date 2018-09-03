@@ -12,6 +12,7 @@ from discord.ext.commands import Bot
 import discord
 import random
 
+TOKEN = "1UIIzfb2AqBM5Jr9VN7MXs_XeLcwAAUL"
 BOT_PREFIX = "d!"
 client = Bot(command_prefix=BOT_PREFIX)
 
