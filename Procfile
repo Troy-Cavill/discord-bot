@@ -1,1 +1,1 @@
-worker: node discord-bot-2
+web: discord bot 2.py
