@@ -77,7 +77,7 @@ async def clearChannel(context, channel: discord.Channel, *leftOvers):
 @client.command(name = "roll dice",
                 description = "Rolls a dice",
                 brief = "d!rolldice [number of sides]",
-                aliases = ["rolldice"],
+                aliases = ["rolldice"], 
                 pass_context = True)
 async def diceRoll(context, numOfSides, *rubbish):
     randomNumber = random.choice(range(int(numOfSides)))
