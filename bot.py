@@ -12,7 +12,6 @@ from discord.ext.commands import Bot
 import discord
 import random
 
-TOKEN = "1UIIzfb2AqBM5Jr9VN7MXs_XeLcwAAUL"
 BOT_PREFIX = "d!"
 client = Bot(command_prefix=BOT_PREFIX)
 
@@ -94,4 +93,4 @@ async def on_ready():
 
 
 
-client.run(TOKEN)
+client.run("NDU4MTQ3Mzc3MTQwODU4ODkw.Dm9E_g.sPRmqq6142p7-I0bfUdflRh-U2c")
