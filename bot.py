@@ -24,6 +24,8 @@ import discord
 
 import random
 
+import requests
+
 
 BOT_PREFIX = "d!"
 
@@ -146,15 +148,23 @@ async def clearChannel(context, channel: discord.Channel, *leftOvers):
 
                 brief = "d!rolldice [number of sides]",
 
-                aliases = ["rolldice"], 
+                aliases = ["rolldice"],
 
                 pass_context = True)
 
-async def diceRoll(context, numOfSides, *rubbish):
+async def diceRoll(context, numOfSides: int, *rubbish):
 
-    randomNumber = random.choice(range(int(numOfSides)))
+    if numOfSides > 9223372036854775807:
 
-    await client.send_message(str(context.message.channel) + str(randomNumber) + ", is your lucky number")
+        await client.send_message(context.message.channel, ("Sorry we don't have the means to roll a die with " + str(numOfSides) + " sides"))
+
+        return
+
+    possibleResponses = [" is your lucky number", " is the number that has been rolled", " comes out on top"]
+
+    randomNumber = random.choice(range(numOfSides))
+
+    await client.send_message(context.message.channel, (str(randomNumber) + random.choice(possibleResponses)))
 
 
 
@@ -171,8 +181,6 @@ async def on_ready():
     print('------')
 
     await client.change_presence(game=discord.Game(name="d!help", type=0))
-
-
 
 
 client.run("NDU4MTQ3Mzc3MTQwODU4ODkw.Dm_Sqw.T88v3YVhhY_rZocOp29n1LHW2XA")
