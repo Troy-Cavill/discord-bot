@@ -79,6 +79,16 @@ async def diceRoll(context, numOfSides: int, *rubbish):
     await client.send_message(context.message.channel, (str(randomNumber) + random.choice(possibleResponses)))
 
 
+@client.command(name = "weather",
+                description = "Tells you the weather",
+                brief = "d!weather [zip code]",
+                pass_context = True)
+async def weather(context, zipCode, *rubbish):
+    url = "https://api.openweathermap.org/data/2.5/weather?q=London"
+    response = requests.get(url)
+    response.json()["a"]["b"]["c"]
+
+
 @client.event
 async def on_ready():
     print("Logged in as")
@@ -86,4 +96,5 @@ async def on_ready():
     print(client.user.id)
     print('------')
     await client.change_presence(game=discord.Game(name="d!help", type=0))
+
 client.run(TOKEN)
