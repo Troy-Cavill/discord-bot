@@ -26,6 +26,8 @@ import random
 
 import requests
 
+import os
+
 
 BOT_PREFIX = "d!"
 
@@ -183,4 +185,4 @@ async def on_ready():
     await client.change_presence(game=discord.Game(name="d!help", type=0))
 
 
-client.run(BOT_TOKEN)
+client.run(os.environ("BOT_TOKEN"))
