@@ -80,7 +80,7 @@ async def clearChannel(context, channel: discord.Channel, *leftOvers):
                 pass_context = True)
 async def diceRoll(context, numOfSides, *rubbish):
     randomNumber = random.choice(range(int(numOfSides)))
-    await client.send_message(context.message.channel, randomNumber, ", is your lucky number")
+    await client.send_message(str(context.message.channel) + str(randomNumber) + ", is your lucky number")
 
 
 @client.event
