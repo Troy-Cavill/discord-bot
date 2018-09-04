@@ -12,7 +12,6 @@ from discord.ext.commands import Bot
 import discord
 import random
 import requests
-import os
 
 BOT_PREFIX = "d!"
 client = Bot(command_prefix=BOT_PREFIX)
