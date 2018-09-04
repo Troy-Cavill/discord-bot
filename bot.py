@@ -96,4 +96,4 @@ async def on_ready():
     print('------')
     await client.change_presence(game=discord.Game(name="d!help", type=0))
 
-client.run("NDU4MTQ3Mzc3MTQwODU4ODkw.Dm9E_g.sPRmqq6142p7-I0bfUdflRh-U2c")
+client.run("NDU4MTQ3Mzc3MTQwODU4ODkw.Dm-t2Q.WHCs4hgToVFLaoU9mnKAHn4RtsI")
