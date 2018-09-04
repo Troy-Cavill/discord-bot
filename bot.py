@@ -31,7 +31,7 @@ import os
 
 BOT_PREFIX = "d!"
 
-TOKEN = = os.environ["BOT_TOKEN"]
+TOKEN = = os.environ[BOT_TOKEN]
 
 client = Bot(command_prefix=BOT_PREFIX)
 
