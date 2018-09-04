@@ -183,4 +183,4 @@ async def on_ready():
     await client.change_presence(game=discord.Game(name="d!help", type=0))
 
 
-client.run("NDU4MTQ3Mzc3MTQwODU4ODkw.Dm_Sqw.T88v3YVhhY_rZocOp29n1LHW2XA")
+client.run(TOKEN)
