@@ -12,6 +12,7 @@ from discord.ext.commands import Bot
 import discord
 import random
 import requests
+import os
 
 BOT_PREFIX = "d!"
 client = Bot(command_prefix=BOT_PREFIX)
@@ -96,4 +97,4 @@ async def on_ready():
     print('------')
     await client.change_presence(game=discord.Game(name="d!help", type=0))
 
-client.run(TOKEN)
+client.run(os.environ["NDU4MTQ3Mzc3MTQwODU4ODkw.Dm-vkQ.30Iy7g7T-wISAXW4rjT977pYVQg"])
