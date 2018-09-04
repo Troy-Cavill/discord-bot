@@ -31,7 +31,7 @@ import os
 
 BOT_PREFIX = "d!"
 
-TOKEN = os.environ[BOT_TOKEN]
+TOKEN = os.environ["BOT_TOKEN"]
 
 client = Bot(command_prefix=BOT_PREFIX)
 
@@ -186,4 +186,4 @@ async def on_ready():
 
     await client.change_presence(game=discord.Game(name="d!help", type=0))
 
-client.run("NDU4MTQ3Mzc3MTQwODU4ODkw.DnCQkw.D78wjQKXM1I-q13yx-nlbnAHwvI")
+client.run(TOKEN)
