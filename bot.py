@@ -80,14 +80,19 @@ async def diceRoll(context, numOfSides: int, *rubbish):
 
 
 @client.command(name = "weather",
-                description = "Tells you the weather",
-                brief = "d!weather [zip code]",
-                pass_context = True)
-async def weather(context, zipCode, *rubbish):
-    url = "https://api.openweathermap.org/data/2.5/weather?q=London"
-    response = requests.get(url)
-    response.json()["a"]["b"]["c"]
-
+            description = "Tells you the weather",
+            brief = "d!weather [zip code]",
+            pass_context = True)
+async def weather(context, cityName, *rubbish):
+    apiKey = "a8b8600657041f15f6a72d46a444dbd4"
+    r = requests.get("http://api.openweathermap.org/data/2.5/weather?q={0}&APPID={1}&units=metric".format(cityName, apiKey))
+    response = r.json()
+    weather = response["weather"][0]["main"]
+    tempC = response["main"]["temp"]
+    tempF = "{0:.1f}".format(float(tempC) / (5/9) + 32)
+    print(weather, tempC, tempF)
+    await client.send_message(context.message.channel, ("Weather: " + str(weather) + "\nTemperature in Celsius: " + str(tempC) + "\nTemperature in Fahrenheit: " + str(tempF)))
+    
 
 @client.event
 async def on_ready():
