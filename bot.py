@@ -4,9 +4,10 @@ import random
 import requests
 import os
 
-BOT_PREFIX = "d!"
 TOKEN = os.environ["BOT_TOKEN"]
+BOT_PREFIX = ("d!","D!")
 client = Bot(command_prefix=BOT_PREFIX)
+
 
 @client.command(name = "8ball",
                 description = "Answers a yes or no question",
@@ -78,10 +79,9 @@ async def diceRoll(context, numOfSides: int, *rubbish):
     randomNumber = random.choice(range(numOfSides))
     await client.send_message(context.message.channel, (str(randomNumber) + random.choice(possibleResponses)))
 
-
 @client.command(name = "weather",
-            description = "Tells you the weather",
-            brief = "d!weather [zip code]",
+            description = "Tells you the weather in a given city",
+            brief = "d!weather [city]",
             pass_context = True)
 async def weather(context, cityName, *rubbish):
     apiKey = "a8b8600657041f15f6a72d46a444dbd4"
@@ -92,7 +92,7 @@ async def weather(context, cityName, *rubbish):
     tempF = "{0:.1f}".format(float(tempC) / (5/9) + 32)
     print(weather, tempC, tempF)
     await client.send_message(context.message.channel, ("Weather: " + str(weather) + "\nTemperature in Celsius: " + str(tempC) + "\nTemperature in Fahrenheit: " + str(tempF)))
-    
+
 
 @client.event
 async def on_ready():
@@ -101,5 +101,7 @@ async def on_ready():
     print(client.user.id)
     print('------')
     await client.change_presence(game=discord.Game(name="d!help", type=0))
+
+
 
 client.run(TOKEN)
