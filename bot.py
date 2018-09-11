@@ -1,8 +1,19 @@
+#-------------------------------------------------------------------------------
+# Name:        <name>
+# Purpose:
+#
+# Author:      troyc
+#
+# Created:     <date>
+# Copyright:   (c) troyc 2018
+# Licence:     <your licence>
+#-------------------------------------------------------------------------------
 from discord.ext.commands import Bot
 import discord
 import random
 import requests
 import os
+import pickle
 
 TOKEN = os.environ["BOT_TOKEN"]
 BOT_PREFIX = ("d!","D!")
@@ -93,6 +104,24 @@ async def weather(context, cityName, *rubbish):
     print(weather, tempC, tempF)
     await client.send_message(context.message.channel, ("Weather: " + str(weather) + "\nTemperature in Celsius: " + str(tempC) + "\nTemperature in Fahrenheit: " + str(tempF)))
 
+@client.command(name = "givepoint",
+                description = "Gives you one point",
+                brief = "d!give",
+                aliases = ["give"],
+                pass_context = True)
+async def givePoint(context):
+    author = context.message.author
+    with open("pointFile", "rb") as file:
+        pointList = pickle.load(file)
+    try:
+        pointList[author.id] += 1
+    except:
+        pointList[author.id] = 1
+    with open("pointFile", "wb") as file:
+            pickle.dump(pointList,file)
+    with open("pointFile", "rb") as file:
+        pointList = pickle.load(file)
+        await client.send_message(context.message.channel, ("{0} you know have {1} points".format(author.mention, pointList[author.id])))
 
 @client.event
 async def on_ready():
@@ -100,6 +129,14 @@ async def on_ready():
     print(client.user.name)
     print(client.user.id)
     print('------')
+
+    try:
+        with open("pointFile", "rb") as file:
+            i = 0
+    except:
+        with open("pointFile", "wb") as file:
+            pickle.dump({},file)
+
     await client.change_presence(game=discord.Game(name="d!help", type=0))
 
 
