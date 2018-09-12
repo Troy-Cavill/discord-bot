@@ -136,8 +136,7 @@ async def ping(context):
     t1 = time.perf_counter()
     await client.send_typing(context. message.channel)
     t2 = time.perf_counter()
-    print(t2-t1)
-    pingTime = round(t2-t1, 1)
+    pingTime = t2-t1
     await client.send_message(context.message.channel, ("Pong: {0}ms".format(pingTime)))
 
 @client.command(name = "botToBot",
