@@ -15,6 +15,7 @@ import requests
 import os
 import pickle
 import time
+import asyncio
 
 TOKEN = os.environ["BOT_TOKEN"]
 BOT_PREFIX = ("d!","D!")
@@ -69,11 +70,22 @@ async def square(number):
                 brief = "d!clear [channel name]",
                 aliases = ["clear"],
                 pass_context = True)
-async def clearChannel(context, channel: discord.Channel, *leftOvers):
-    if str(channel) == "testing-in-private":
-        await client.send_message(context.message.channel, "That is unsupported")
-        return
-    if (context.message.author.permissions_in(context.message.channel).administrator):
+async def clearChannel(context, channel: discord.Channel, number, *rubbish):
+    if (context.message.author.permissions_in(channel).administrator):
+        try:
+            '''
+            Fails on the delete line in the try section
+            '''
+            print("1")
+            clearNumber = int(number)
+            print("2")
+            await client.send_message(context.message.channel, "Clearing messages...")
+            print("3")
+            for number in range(clearNumber):
+                print("4")
+                await client.delete_message(client.logs_from(channel)[0])
+        except:
+            pass
             await client.send_message(context.message.channel, "Clearing messages...")
             async for msg in client.logs_from(channel):
                 await client.delete_message(msg)
@@ -136,15 +148,17 @@ async def ping(context):
     t1 = time.perf_counter()
     await client.send_typing(context. message.channel)
     t2 = time.perf_counter()
-    pingTime = t2-t1
+    pingTime = round(t2-t1, 4)
     await client.send_message(context.message.channel, ("Pong: {0}ms".format(pingTime)))
 
-@client.command(name = "botToBot",
-                aliases = ["d!hi", "hi"],
-                pass_context = True)
-async def hello(context):
-    await client.send_message(context.message.channel, "d!hi")
-    
+async def print_servers():
+    await client.wait_until_ready()
+    while not client.is_closed():
+        print("Current Servers: ")
+        for server in client.servers:
+            print("{0} : {1}".format(server.name, server.id))
+        await asyncio.sleep(86400)
+
 @client.event
 async def on_ready():
     print("Logged in as")
@@ -162,5 +176,5 @@ async def on_ready():
     await client.change_presence(game=discord.Game(name="d!help", type=0))
 
 
-
+client.loop.create_task(print_servers())
 client.run(TOKEN)
