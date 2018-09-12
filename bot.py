@@ -153,7 +153,7 @@ async def ping(context):
 
 async def print_servers():
     await client.wait_until_ready()
-    while not client.is_closed():
+    while not client.is_closed:
         print("Current Servers: ")
         for server in client.servers:
             print("{0} : {1}".format(server.name, server.id))
