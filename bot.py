@@ -14,6 +14,7 @@ import random
 import requests
 import os
 import pickle
+import time
 
 TOKEN = os.environ["BOT_TOKEN"]
 BOT_PREFIX = ("d!","D!")
