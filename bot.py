@@ -139,7 +139,12 @@ async def ping(context):
     pingTime = round(t2-t1, 0)
     await client.send_message(context.message.channel, ("Pong: {0}ms".format(pingTime)))
 
-
+@client.command(name = "botToBot",
+                aliases = ["d!hi", "hi"],
+                pass_context = True)
+async def hello(context):
+    await client.send_message(context.message.channel, "d!hi")
+    
 @client.event
 async def on_ready():
     print("Logged in as")
