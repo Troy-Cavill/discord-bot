@@ -23,7 +23,7 @@ client = Bot(command_prefix=BOT_PREFIX)
 @client.command(name = "8ball",
                 description = "Answers a yes or no question",
                 brief = "d!8ball",
-                aliases = ["eightball", "eight ball", "8 ball"],
+                aliases = ["eightball"],
                 pass_context = True)
 async def eight_ball(context):
     possible_answers = [
@@ -77,6 +77,7 @@ async def clearChannel(context, channel: discord.Channel, *leftOvers):
             async for msg in client.logs_from(channel):
                 await client.delete_message(msg)
 
+
 @client.command(name = "roll dice",
                 description = "Rolls a dice",
                 brief = "d!rolldice [number of sides]",
@@ -89,6 +90,7 @@ async def diceRoll(context, numOfSides: int, *rubbish):
     possibleResponses = [" is your lucky number", " is the number that has been rolled", " comes out on top"]
     randomNumber = random.choice(range(numOfSides))
     await client.send_message(context.message.channel, (str(randomNumber) + random.choice(possibleResponses)))
+
 
 @client.command(name = "weather",
             description = "Tells you the weather in a given city",
@@ -104,24 +106,38 @@ async def weather(context, cityName, *rubbish):
     print(weather, tempC, tempF)
     await client.send_message(context.message.channel, ("Weather: " + str(weather) + "\nTemperature in Celsius: " + str(tempC) + "\nTemperature in Fahrenheit: " + str(tempF)))
 
-@client.command(name = "givepoint",
-                description = "Gives you one point",
-                brief = "d!give",
-                aliases = ["give"],
+
+#@client.command(name = "givepoint",
+#                description = "Gives you one point",
+#                brief = "d!give",
+#                aliases = ["give"],
+#                pass_context = True)
+#async def givePoint(context):
+#    author = context.message.author
+#    with open("pointFile", "rb") as file:
+#        pointList = pickle.load(file)
+#    try:
+#        pointList[author.id] += 1
+#    except:
+#        pointList[author.id] = 1
+#    with open("pointFile", "wb") as file:
+#            pickle.dump(pointList,file)
+#    with open("pointFile", "rb") as file:
+#        pointList = pickle.load(file)
+#        await client.send_message(context.message.channel, ("{0} you know have {1} points".format(author.mention, pointList[author.id])))
+
+
+@client.command(name = "ping",
+                description = "Returns the ping",
+                brief = "d!ping",
                 pass_context = True)
-async def givePoint(context):
-    author = context.message.author
-    with open("pointFile", "rb") as file:
-        pointList = pickle.load(file)
-    try:
-        pointList[author.id] += 1
-    except:
-        pointList[author.id] = 1
-    with open("pointFile", "wb") as file:
-            pickle.dump(pointList,file)
-    with open("pointFile", "rb") as file:
-        pointList = pickle.load(file)
-        await client.send_message(context.message.channel, ("{0} you know have {1} points".format(author.mention, pointList[author.id])))
+async def ping(context):
+    t1 = time.perf_counter()
+    await client.send_typing(context. message.channel)
+    t2 = time.perf_counter()
+    pingTime = round(t2-t1, 0)
+    await client.send_message(context.message.channel, ("Pong: {0}ms".format(pingTime)))
+
 
 @client.event
 async def on_ready():
