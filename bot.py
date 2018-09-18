@@ -166,9 +166,13 @@ async def google(context, *searchTerm):
         newSearchTerm += character
     r = requests.get("https://www.googleapis.com/customsearch/v1?q={0}&cx=015437053243024247291%3Axwsquiacyd0&key={1}".format(searchTerm, GOOGLE_API_KEY))
     response = r.json()
-    title = response["items"][0]["title"]
-    link = response["items"][0]["link"]
-    await client.send_message(context.message.channel, ("```\n{0}\n{1}\n```".format(title,link)))
+    try:
+        title = response["items"][0]["title"]
+        link = response["items"][0]["link"]
+        msg = "{0}\n{1}\n".format(title,link)
+    except:
+        msg = "Sorry that search term returned 0 results"
+    await client.send_message(context.message.channel, msg)
 
 
 async def print_servers():
