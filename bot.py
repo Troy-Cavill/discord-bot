@@ -164,7 +164,7 @@ async def google(context, *searchTerm):
         if character == " ":
             character = "+"
         newSearchTerm += character
-    r = requests.get("https://www.googleapis.com/customsearch/v1?q={0}&key={1}".format(searchTerm, WEATHER_API_KEY))
+    r = requests.get("https://www.googleapis.com/customsearch/v1?q={0}&cx=015437053243024247291%3Axwsquiacyd0&key={1}".format(searchTerm, GOOGLE_API_KEY))
     response = r.json()
     title = response["items"][0]["title"]
     link = response["items"][0]["link"]
