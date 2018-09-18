@@ -18,6 +18,8 @@ import time
 import asyncio
 
 TOKEN = os.environ["BOT_TOKEN"]
+GOOGLE_API_KEY = os.environ["GOOGLE_API_KEY"]
+WEATHER_API_KEY = os.environ["WEATHER_API_KEY"]
 BOT_PREFIX = ("d!","D!")
 client = Bot(command_prefix=BOT_PREFIX)
 
@@ -110,8 +112,7 @@ async def diceRoll(context, numOfSides: int, *rubbish):
             brief = "d!weather [city]",
             pass_context = True)
 async def weather(context, cityName, *rubbish):
-    apiKey = "a8b8600657041f15f6a72d46a444dbd4"
-    r = requests.get("http://api.openweathermap.org/data/2.5/weather?q={0}&APPID={1}&units=metric".format(cityName, apiKey))
+    r = requests.get("http://api.openweathermap.org/data/2.5/weather?q={0}&APPID={1}&units=metric".format(cityName, WEATHER_API_KEY))
     response = r.json()
     weather = response["weather"][0]["main"]
     tempC = response["main"]["temp"]
@@ -150,6 +151,16 @@ async def ping(context):
     t2 = time.perf_counter()
     pingTime = round(t2-t1, 4)
     await client.send_message(context.message.channel, ("Pong: {0}ms".format(pingTime)))
+
+
+@client.command(name = "google",
+                description = "Googles the given search term",
+                brief = "d!google [searchTerm]",
+                aliases = ["search"],
+                pass_context = True)
+async def google(context, searchTerm):
+
+
 
 async def print_servers():
     await client.wait_until_ready()
