@@ -158,8 +158,17 @@ async def ping(context):
                 brief = "d!google [searchTerm]",
                 aliases = ["search"],
                 pass_context = True)
-async def google(context, searchTerm):
-  pass
+async def google(context, *searchTerm):
+    newSearchTerm = ""
+    for character in searchTerm:
+        if character == " ":
+            character = "+"
+        newSearchTerm += character
+    r = requests.get("https://www.googleapis.com/customsearch/v1?q={0}&key={1}".format(searchTerm, WEATHER_API_KEY))
+    response = r.json()
+    title = response["items"][0]["title"]
+    link = response["items"][0]["link"]
+    await client.send_message(context.message.channel, ("```\n{0}\n{1}\n```".format(title,link)))
 
 
 async def print_servers():
