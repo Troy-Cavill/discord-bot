@@ -21,7 +21,7 @@ TOKEN = os.environ["BOT_TOKEN"]
 GOOGLE_API_KEY = os.environ["GOOGLE_API_KEY"]
 WEATHER_API_KEY = os.environ["WEATHER_API_KEY"]
 BOT_PREFIX = ("d!","D!")
-client = Bot(command_prefix=BOT_PREFIX)
+client = Bot(command_prefix = BOT_PREFIX,  case_insensitive = True)
 
 
 @client.command(name = "8ball",
