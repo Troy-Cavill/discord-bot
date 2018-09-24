@@ -20,6 +20,8 @@ import asyncio
 TOKEN = os.environ["BOT_TOKEN"]
 GOOGLE_API_KEY = os.environ["GOOGLE_API_KEY"]
 WEATHER_API_KEY = os.environ["WEATHER_API_KEY"]
+DICTIONARY_APP_KEY = os.environ["DICTIONARY_APP_KEY"]
+DICTIONARY_APP_ID = os.environ["DICTIONARY_APP_ID"]
 BOT_PREFIX = ("d!","D!")
 client = Bot(command_prefix = BOT_PREFIX,  case_insensitive = True)
 
@@ -173,6 +175,22 @@ async def google(context, *searchTerm):
     except:
         msg = "Sorry that search term returned 0 results"
     await client.send_message(context.message.channel, msg)
+
+
+@client.command(name = "define",
+                description = "Returns the definition of the base word of the given word",
+                brief = "d!define [searchWord]",
+                aliases = ["dictionary", "definition"],
+                pass_context = True)
+async def dictionary(context, searchWord):
+    language = 'en'
+    r = requests.get('https://od-api.oxforddictionaries.com:443/api/v1/inflections/' + language + '/' + searchWord.lower(), headers = {'app_id': DICTIONARY_APP_ID, 'app_key': DICTIONARY_APP_KEY})
+    response = r.json()
+    baseword = response["results"][0]["lexicalEntries"][0]["inflectionOf"][0]["id"]
+    r = requests.get('https://od-api.oxforddictionaries.com:443/api/v1/entries/' + language + '/' + baseword, headers = {'app_id': DICTIONARY_APP_ID, 'app_key': DICTIONARY_APP_KEY})
+    response = r.json()
+    definition = response["results"][0]["lexicalEntries"][0]["entries"][0]["senses"][0]["definitions"][0]
+    await client.send_message(context.message.channel, (baseword + ", " + definition))
 
 
 async def print_servers():
