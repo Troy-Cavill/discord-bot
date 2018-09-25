@@ -184,7 +184,7 @@ async def google(context, *searchTerm):
                 pass_context = True)
 async def dictionary(context, searchWord):
     language = 'en'
-    r = requests.get('https://od-api.oxforddictionaries.com:443/api/v1/inflections/' + language + '/' + searchWord.lower(), headers = {'app_id': app_id, 'app_key': app_key})
+    r = requests.get('https://od-api.oxforddictionaries.com:443/api/v1/inflections/' + language + '/' + searchWord.lower(), headers = {'app_id': DICTIONARY_APP_ID, 'app_key': DICTIONARY_APP_KEY})
     try:
         response = r.json()
     except:
