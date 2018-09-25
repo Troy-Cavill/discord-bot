@@ -185,7 +185,7 @@ async def google(context, *searchTerm):
 async def dictionary(context, searchWord):
     language = 'en'
     try:
-        r = requests.get('https://od-api.oxforddictionaries.com:443/api/v1/inflections/' + language + '/' + searchWord.lower(), headers = {'app_id': app_id, 'app_key': app_key})
+        r = requests.get('https://od-api.oxforddictionaries.com:443/api/v1/inflections/' + language + '/' + searchWord.lower(), headers = {'app_id': DICTIONARY_APP_ID, 'app_key': DICTIONARY_APP_KEY})
     except:
         await client.send_message(context.message.channel, "Sorry no entries of the word {0} could be found".format(searchWord))
     response = r.json()
