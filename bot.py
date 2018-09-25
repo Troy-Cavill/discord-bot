@@ -190,7 +190,10 @@ async def dictionary(context, searchWord):
         await client.send_message(context.message.channel, "Sorry no entries of the word {0} could be found".format(searchWord))
     response = r.json()
     baseword = response["results"][0]["lexicalEntries"][0]["inflectionOf"][0]["id"]
-    r = requests.get('https://od-api.oxforddictionaries.com:443/api/v1/entries/' + language + '/' + baseword, headers = {'app_id': DICTIONARY_APP_ID, 'app_key': DICTIONARY_APP_KEY})
+    try:
+      r = requests.get('https://od-api.oxforddictionaries.com:443/api/v1/entries/' + language + '/' + baseword, headers = {'app_id': DICTIONARY_APP_ID, 'app_key': DICTIONARY_APP_KEY})
+    except:
+        await client.send_message(context.message.channel, "Sorry no entries of the word {0} could be found".format(searchWord))
     response = r.json()
     definition = response["results"][0]["lexicalEntries"][0]["entries"][0]["senses"][0]["definitions"][0]
     await client.send_message(context.message.channel, (baseword + ", " + definition))
