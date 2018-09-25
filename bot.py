@@ -184,16 +184,14 @@ async def google(context, *searchTerm):
                 pass_context = True)
 async def dictionary(context, searchWord):
     language = 'en'
+    r = requests.get('https://od-api.oxforddictionaries.com:443/api/v1/inflections/' + language + '/' + searchWord.lower(), headers = {'app_id': app_id, 'app_key': app_key})
     try:
-        r = requests.get('https://od-api.oxforddictionaries.com:443/api/v1/inflections/' + language + '/' + searchWord.lower(), headers = {'app_id': DICTIONARY_APP_ID, 'app_key': DICTIONARY_APP_KEY})
+        response = r.json()
     except:
         await client.send_message(context.message.channel, "Sorry no entries of the word {0} could be found".format(searchWord))
-    response = r.json()
+        return
     baseword = response["results"][0]["lexicalEntries"][0]["inflectionOf"][0]["id"]
-    try:
-      r = requests.get('https://od-api.oxforddictionaries.com:443/api/v1/entries/' + language + '/' + baseword, headers = {'app_id': DICTIONARY_APP_ID, 'app_key': DICTIONARY_APP_KEY})
-    except:
-        await client.send_message(context.message.channel, "Sorry no entries of the word {0} could be found".format(searchWord))
+    r = requests.get('https://od-api.oxforddictionaries.com:443/api/v1/entries/' + language + '/' + baseword, headers = {'app_id': DICTIONARY_APP_ID, 'app_key': DICTIONARY_APP_KEY})
     response = r.json()
     definition = response["results"][0]["lexicalEntries"][0]["entries"][0]["senses"][0]["definitions"][0]
     await client.send_message(context.message.channel, (baseword + ", " + definition))
