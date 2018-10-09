@@ -89,10 +89,10 @@ async def clearChannel(context, channel: discord.Channel, number, *rubbish):
             print("3")
             print(client.logs_from(channel)
             #for number in range(clearNumber):
-                print("4")
+                #print("4")
                 
                 #msg = client.logs_from(channel)[0]
-                print("5")
+                #print("5")
                 #await client.delete_message(msg)
         except:
             pass
