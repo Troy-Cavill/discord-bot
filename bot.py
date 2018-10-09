@@ -88,7 +88,7 @@ async def clearChannel(context, channel: discord.Channel, number, *rubbish):
             await client.send_message(context.message.channel, "Clearing messages...")
             print("3")
             
-            for msg in client.logs_from(channel):
+            async for msg in client.logs_from(channel):
                 print("4")
                 if clearNumber == 0:
                   return
