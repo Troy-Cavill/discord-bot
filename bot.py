@@ -77,12 +77,10 @@ async def square(number):
 async def clearChannel(context, channel: discord.Channel, number, *rubbish):
     if (context.message.author.permissions_in(channel).administrator):
         try:
-            '''
-            Fails on the delete line in the try section
-            '''
             print("1")
-            clearNumber = int(number)
+            clearNumber = int(number) + 1
             if channel != context.message.channel:
+              clearNumber -= 1
               await client.send_message(context.message.channel, "Clearing messages...")
             print("2")
             
