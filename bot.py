@@ -70,8 +70,8 @@ async def square(number):
 
 #Clears a channel
 @client.command(name = "clear channel",
-                description = "Clears a channel",
-                brief = "d!clear [channel name]",
+                description = "Clears a channel, the number of messages to delete is optional but if not provided it will delete all",
+                brief = "d!clear [channel name] [num of msgs]",
                 aliases = ["clear"],
                 pass_context = True)
 async def clearChannel(context, channel: discord.Channel, number, *rubbish):
