@@ -82,12 +82,16 @@ async def clearChannel(context, channel: discord.Channel, number, *rubbish):
             '''
             print("1")
             clearNumber = int(number)
+            if channel == context.message.channel:
+              clear Nummer += 1
             print("2")
             await client.send_message(context.message.channel, "Clearing messages...")
             print("3")
             for number in range(clearNumber):
                 print("4")
-                await client.delete_message(client.logs_from(channel)[0])
+                msg = client.logs_from(channel)[0]
+                print("5")
+                await client.delete_message(msg)
         except:
             pass
             await client.send_message(context.message.channel, "Clearing messages...")
