@@ -204,7 +204,7 @@ async def dictionary(context, searchWord):
 async def print_servers():
     await client.wait_until_ready()
     while not client.is_closed:
-        print("------/nCurrent Servers: ")
+        print("------\nCurrent Servers: ")
         for server in client.servers:
             print("{0} : {1}".format(server.name, server.id))
             print("------")
