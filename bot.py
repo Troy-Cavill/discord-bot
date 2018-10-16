@@ -207,7 +207,7 @@ async def print_servers():
         print("Current Servers: ")
         for server in client.servers:
             print("{0} : {1}".format(server.name, server.id))
-        await asyncio.sleep(86400)
+        await asyncio.sleep(10)
 
 @client.event
 async def on_ready():
