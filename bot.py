@@ -22,6 +22,7 @@ GOOGLE_API_KEY = os.environ["GOOGLE_API_KEY"]
 WEATHER_API_KEY = os.environ["WEATHER_API_KEY"]
 DICTIONARY_APP_KEY = os.environ["DICTIONARY_APP_KEY"]
 DICTIONARY_APP_ID = os.environ["DICTIONARY_APP_ID"]
+TRN_API_KEY = os.environ["TRN_API_KEY"]
 BOT_PREFIX = ("d!","D!")
 client = Bot(command_prefix = BOT_PREFIX,  case_insensitive = True)
 
@@ -199,6 +200,51 @@ async def dictionary(context, searchWord):
     response = r.json()
     definition = response["results"][0]["lexicalEntries"][0]["entries"][0]["senses"][0]["definitions"][0]
     await client.send_message(context.message.channel, (baseword + ", " + definition))
+
+    
+@client.command(name = "fortnite_stats",
+                description = "Gives a wide range of stats.\nCredit: Fortnite Tracker, https://fortnitetracker.com/",
+                brief = "d!fortnite [platform] [playerName]",
+                pass_context = True)
+async def fortniteStats(context, platform, playerName):
+    r = requests.get("https://api.fortnitetracker.com/v1/profile/{0}/{1}".format(platform, playerName), headers = {"TRN-Api-Key": TRN_API_KEY})
+    response = r.json()
+    #p2 = solo
+    #p10 = duo
+    #p9 = squad
+
+    soloStats = response["stats"].get("p2", "not found")
+    soloGamesPlayed = soloStats["matches"]["valueInt"]
+    soloWins = soloStats["top1"]["valueInt"]
+    soloWinPercentage = soloStats["winRatio"]["valueDec"]
+    soloKills = soloStats["kills"]["valueInt"]
+    soloKD = soloStats["kd"]["valueDec"]
+
+    duoStats = response["stats"].get("p10", "not found")
+    duoGamesPlayed = duoStats["matches"]["valueInt"]
+    duoWins = duoStats["top1"]["valueInt"]
+    duoWinPercentage = duoStats["winRatio"]["valueDec"]
+    duoKills = duoStats["kills"]["valueInt"]
+    duoKD = duoStats["kd"]["valueDec"]
+
+    squadStats = response["stats"].get("p9", "not found")
+    squadGamesPlayed = squadStats["matches"]["valueInt"]
+    squadWins = squadStats["top1"]["valueInt"]
+    squadWinPercentage = squadStats["winRatio"]["valueDec"]
+    squadKills = squadStats["kills"]["valueInt"]
+    squadKD = squadStats["kd"]["valueDec"]
+
+    lifeTimeStats = response.get("lifeTimeStats", "not found")
+    overallGamesPlayed = lifeTimeStats[7]["value"]
+    overallWins = lifeTimeStats[8]["value"]
+    overallWinPercentage = lifeTimeStats[9]["value"]
+    overallKills = lifeTimeStats[10]["value"]
+    overallKD = lifeTimeStats[11]["value"]
+
+    platform = response.get("platformNameLong", "not found")
+    epicName = response.get("epicUserHandle", "not found")
+
+    await client.send_message(context.message.channel, "{0} - {21}\n\nOverall: \nGames Played: {1}\nWins: {2}\nWin Percentage: {3}\nKills: {4}\nK/D: {5}\n\nSolo: \nGames Played: {6}\nWins: {7}\nWin Percentage: {8}%\nKills: {9}\nK/D: {10}\n\nDuo: \nGames Played: {11}\nWins: {12}\nWin Percentage: {13}%\nKills: {14}\nK/D: {15}\n\nSquad: \nGames Played: {16}\nWins: {17}\nWin Percentage: {18}\nKills: {19}\nK/D: {20}".format(epicName, overallGamesPlayed, overallWins, overallWinPercentage, overallKills, overallKD, soloGamesPlayed, soloWins, soloWinPercentage, soloKills, soloKD, duoGamesPlayed, duoWins, duoWinPercentage, duoKills, duoKD, squadGamesPlayed, squadWins, squadWinPercentage, squadKills, squadKD, platform))
 
 
 async def print_servers():
