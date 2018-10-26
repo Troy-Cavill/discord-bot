@@ -16,6 +16,7 @@ import os
 import pickle
 import time
 import asyncio
+import psycopg2
 
 TOKEN = os.environ["BOT_TOKEN"]
 GOOGLE_API_KEY = os.environ["GOOGLE_API_KEY"]
@@ -54,7 +55,7 @@ async def eight_ball(context):
     "My sources say no",
     "Outlook not so good",
     "Very doubtful"]
-    await client.say(random.choice(possible_answers) + ", " + context.message.author.mention)
+    await client.say(context.message.author.mention + ", " + random.choice(possible_answers))
 
 
 @client.command(name = "sqauare number",
@@ -84,32 +85,38 @@ async def clearChannel(context, channel: discord.Channel, number, *rubbish):
               clearNumber -= 1
               await client.send_message(context.message.channel, "Clearing messages...")
             print("2")
-            
+
             async for msg in client.logs_from(channel):
                 print("3")
                 if clearNumber == 0:
                   return
                 else:
-                  clearNumber -= 1        
+                  clearNumber -= 1
                 print("4")
                 await client.delete_message(msg)
                 print("successful delete")
-        except:                       
+        except:
             await client.send_message(context.message.channel, "Clearing messages...")
             async for msg in client.logs_from(channel):
                 await client.delete_message(msg)
-
+    else:
+        return
 
 @client.command(name = "roll dice",
                 description = "Rolls a dice",
                 brief = "d!rolldice [number of sides]",
                 aliases = ["rolldice"],
                 pass_context = True)
-async def diceRoll(context, numOfSides: int, *rubbish):
+async def diceRoll(context, numOfSides, *rubbish):
     if numOfSides > 9223372036854775807:
-        await client.send_message(context.message.channel, ("Sorry we don't have the means to roll a die with " + str(numOfSides) + " sides"))
+        await client.send_message(context.message.channel, ("Sorry I do not have the means to roll a die with " + str(numOfSides) + " sides"))
         return
-    possibleResponses = [" is your lucky number", " is the number that has been rolled", " comes out on top"]
+    try:
+        numOfSides = int(numOfSides)
+    except:
+        client.send_message(context.message.channel, "I can not roll a die with \"" + numOfSides + "\" sides" )
+        return
+    possibleResponses = [" is your lucky number", " is the number that I have rolled", " comes out on top"]
     randomNumber = random.choice(range(numOfSides))
     await client.send_message(context.message.channel, (str(randomNumber) + random.choice(possibleResponses)))
 
@@ -121,7 +128,11 @@ async def diceRoll(context, numOfSides: int, *rubbish):
 async def weather(context, cityName, *rubbish):
     r = requests.get("http://api.openweathermap.org/data/2.5/weather?q={0}&APPID={1}&units=metric".format(cityName, WEATHER_API_KEY))
     response = r.json()
-    weather = response["weather"][0]["main"]
+    try:
+        weather = response["weather"][0]["main"]
+    except:
+        client.send_message(context.message.channel, ("I could not find a city with the name " + cityName))
+        return
     tempC = response["main"]["temp"]
     tempF = "{0:.1f}".format(float(tempC) / (5/9) + 32)
     print(weather, tempC, tempF)
@@ -179,6 +190,7 @@ async def google(context, *searchTerm):
         msg = "{0}\n{1}\n".format(title,link)
     except:
         msg = "Sorry that search term returned 0 results"
+        return
     await client.send_message(context.message.channel, msg)
 
 
@@ -201,50 +213,57 @@ async def dictionary(context, searchWord):
     definition = response["results"][0]["lexicalEntries"][0]["entries"][0]["senses"][0]["definitions"][0]
     await client.send_message(context.message.channel, (baseword + ", " + definition))
 
-    
+
 @client.command(name = "fortnite_stats",
                 description = "Gives a wide range of stats.\nCredit: Fortnite Tracker, https://fortnitetracker.com/",
                 brief = "d!fortnite [platform] [playerName]",
                 pass_context = True)
 async def fortniteStats(context, platform, playerName):
-    r = requests.get("https://api.fortnitetracker.com/v1/profile/{0}/{1}".format(platform, playerName), headers = {"TRN-Api-Key": TRN_API_KEY})
-    response = r.json()
+    r = requests.get("https://api.fortnitetracker.com/v1/profile/{0}/{1}".format(platform.lowercase(), playerName), headers = {"TRN-Api-Key": TRN_API_KEY})
+    try:
+        response = r.json()
+    except:
+        client.send_message(context.message.channel, ("Sorry the platform {0} is not recognized".format(platform)))
+        return
     #p2 = solo
     #p10 = duo
     #p9 = squad
+    try:
+        soloStats = response["stats"].get("p2", "not found")
+        soloGamesPlayed = soloStats["matches"]["valueInt"]
+        soloWins = soloStats["top1"]["valueInt"]
+        soloWinPercentage = soloStats["winRatio"]["valueDec"]
+        soloKills = soloStats["kills"]["valueInt"]
+        soloKD = soloStats["kd"]["valueDec"]
 
-    soloStats = response["stats"].get("p2", "not found")
-    soloGamesPlayed = soloStats["matches"]["valueInt"]
-    soloWins = soloStats["top1"]["valueInt"]
-    soloWinPercentage = soloStats["winRatio"]["valueDec"]
-    soloKills = soloStats["kills"]["valueInt"]
-    soloKD = soloStats["kd"]["valueDec"]
+        duoStats = response["stats"].get("p10", "not found")
+        duoGamesPlayed = duoStats["matches"]["valueInt"]
+        duoWins = duoStats["top1"]["valueInt"]
+        duoWinPercentage = duoStats["winRatio"]["valueDec"]
+        duoKills = duoStats["kills"]["valueInt"]
+        duoKD = duoStats["kd"]["valueDec"]
 
-    duoStats = response["stats"].get("p10", "not found")
-    duoGamesPlayed = duoStats["matches"]["valueInt"]
-    duoWins = duoStats["top1"]["valueInt"]
-    duoWinPercentage = duoStats["winRatio"]["valueDec"]
-    duoKills = duoStats["kills"]["valueInt"]
-    duoKD = duoStats["kd"]["valueDec"]
+        squadStats = response["stats"].get("p9", "not found")
+        squadGamesPlayed = squadStats["matches"]["valueInt"]
+        squadWins = squadStats["top1"]["valueInt"]
+        squadWinPercentage = squadStats["winRatio"]["valueDec"]
+        squadKills = squadStats["kills"]["valueInt"]
+        squadKD = squadStats["kd"]["valueDec"]
 
-    squadStats = response["stats"].get("p9", "not found")
-    squadGamesPlayed = squadStats["matches"]["valueInt"]
-    squadWins = squadStats["top1"]["valueInt"]
-    squadWinPercentage = squadStats["winRatio"]["valueDec"]
-    squadKills = squadStats["kills"]["valueInt"]
-    squadKD = squadStats["kd"]["valueDec"]
+        lifeTimeStats = response.get("lifeTimeStats", "not found")
+        overallGamesPlayed = lifeTimeStats[7]["value"]
+        overallWins = lifeTimeStats[8]["value"]
+        overallWinPercentage = lifeTimeStats[9]["value"]
+        overallKills = lifeTimeStats[10]["value"]
+        overallKD = lifeTimeStats[11]["value"]
 
-    lifeTimeStats = response.get("lifeTimeStats", "not found")
-    overallGamesPlayed = lifeTimeStats[7]["value"]
-    overallWins = lifeTimeStats[8]["value"]
-    overallWinPercentage = lifeTimeStats[9]["value"]
-    overallKills = lifeTimeStats[10]["value"]
-    overallKD = lifeTimeStats[11]["value"]
+        platform = response.get("platformNameLong", "not found")
+        epicName = response.get("epicUserHandle", "not found")
 
-    platform = response.get("platformNameLong", "not found")
-    epicName = response.get("epicUserHandle", "not found")
+    except:
+        client.send_message(context.message.channel, ("The player name {0} could not be found on the platform, {1}".format(playerName, platform)))
 
-    await client.send_message(context.message.channel, "{0} - {21}\n\nOverall: \nGames Played: {1}\nWins: {2}\nWin Percentage: {3}\nKills: {4}\nK/D: {5}\n\nSolo: \nGames Played: {6}\nWins: {7}\nWin Percentage: {8}%\nKills: {9}\nK/D: {10}\n\nDuo: \nGames Played: {11}\nWins: {12}\nWin Percentage: {13}%\nKills: {14}\nK/D: {15}\n\nSquad: \nGames Played: {16}\nWins: {17}\nWin Percentage: {18}%\nKills: {19}\nK/D: {20}".format(epicName, overallGamesPlayed, overallWins, overallWinPercentage, overallKills, overallKD, soloGamesPlayed, soloWins, soloWinPercentage, soloKills, soloKD, duoGamesPlayed, duoWins, duoWinPercentage, duoKills, duoKD, squadGamesPlayed, squadWins, squadWinPercentage, squadKills, squadKD, platform))
+    await client.send_message(context.message.channel, "{0} - {21}\n\nOverall: \nGames Played: {1}\nWins: {2}\nWin Percentage: {3}\nKills: {4}\nK/D: {5}\n\nSolo: \nGames Played: {6}\nWins: {7}\nWin Percentage: {8}%\nKills: {9}\nK/D: {10}\n\nDuo: \nGames Played: {11}\nWins: {12}\nWin Percentage: {13}%\nKills: {14}\nK/D: {15}\n\nSquad: \nGames Played: {16}\nWins: {17}\nWin Percentage: {18}\nKills: {19}\nK/D: {20}".format(epicName, overallGamesPlayed, overallWins, overallWinPercentage, overallKills, overallKD, soloGamesPlayed, soloWins, soloWinPercentage, soloKills, soloKD, duoGamesPlayed, duoWins, duoWinPercentage, duoKills, duoKD, squadGamesPlayed, squadWins, squadWinPercentage, squadKills, squadKD, platform))
 
 
 async def print_servers():
@@ -254,7 +273,14 @@ async def print_servers():
         for server in client.servers:
             print("{0} : {1}".format(server.name, server.id))
         print("------")
-        await asyncio.sleep(3600)
+        await asyncio.sleep(259200)
+
+
+@client.event
+async def on_command_error(exception, context):
+    await client.send_message(context.message.channel, exception)
+
+
 
 @client.event
 async def on_ready():
