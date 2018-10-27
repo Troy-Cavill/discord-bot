@@ -219,7 +219,7 @@ async def dictionary(context, searchWord):
                 brief = "d!fortnite [platform] [playerName]",
                 pass_context = True)
 async def fortniteStats(context, platform, playerName):
-    r = requests.get("https://api.fortnitetracker.com/v1/profile/{0}/{1}".format(platform.lowercase(), playerName), headers = {"TRN-Api-Key": TRN_API_KEY})
+    r = requests.get("https://api.fortnitetracker.com/v1/profile/{0}/{1}".format(platform.lower(), playerName), headers = {"TRN-Api-Key": TRN_API_KEY})
     try:
         response = r.json()
     except:
