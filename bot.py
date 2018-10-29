@@ -220,14 +220,28 @@ async def dictionary(context, searchWord):
                 pass_context = True)
 async def fortniteStats(context, platform, playerName):
     r = requests.get("https://api.fortnitetracker.com/v1/profile/{0}/{1}".format(platform.lower(), playerName), headers = {"TRN-Api-Key": TRN_API_KEY})
+
     try:
-        response = r.json()
+            response = r.json()
     except:
         client.send_message(context.message.channel, ("Sorry the platform {0} is not recognized".format(platform)))
         return
     #p2 = solo
     #p10 = duo
     #p9 = squad
+
+    try:
+        lifeTimeStats = response.get("lifeTimeStats", "not found")
+        overallGamesPlayed = lifeTimeStats[7]["value"]
+        overallWins = lifeTimeStats[8]["value"]
+        overallWinPercentage = lifeTimeStats[9]["value"]
+        overallKills = lifeTimeStats[10]["value"]
+        overallKD = lifeTimeStats[11]["value"]
+        print("overall finished")
+    except:
+        await client.send_message("The player {0} could either not be found on the platform {1} or has not played a game".format(platformName, platform))
+        return
+
     try:
         soloStats = response["stats"].get("p2", "not found")
         soloGamesPlayed = soloStats["matches"]["valueInt"]
@@ -235,35 +249,48 @@ async def fortniteStats(context, platform, playerName):
         soloWinPercentage = soloStats["winRatio"]["valueDec"]
         soloKills = soloStats["kills"]["valueInt"]
         soloKD = soloStats["kd"]["valueDec"]
+        print("solo finished")
+    except:
+        soloGamesPlayed = 0
+        soloWins = 0
+        soloWinPercentage = 0
+        soloKills = 0
+        soloKD = 0
 
+    try:
         duoStats = response["stats"].get("p10", "not found")
         duoGamesPlayed = duoStats["matches"]["valueInt"]
         duoWins = duoStats["top1"]["valueInt"]
         duoWinPercentage = duoStats["winRatio"]["valueDec"]
         duoKills = duoStats["kills"]["valueInt"]
         duoKD = duoStats["kd"]["valueDec"]
+        print("duo finished")
+    except:
+        duoGamesPlayed = 0
+        duoWins = 0
+        duoWinPercentage = 0
+        duoKills = 0
+        duoKD = 0
 
+    try:
         squadStats = response["stats"].get("p9", "not found")
         squadGamesPlayed = squadStats["matches"]["valueInt"]
         squadWins = squadStats["top1"]["valueInt"]
         squadWinPercentage = squadStats["winRatio"]["valueDec"]
         squadKills = squadStats["kills"]["valueInt"]
         squadKD = squadStats["kd"]["valueDec"]
-
-        lifeTimeStats = response.get("lifeTimeStats", "not found")
-        overallGamesPlayed = lifeTimeStats[7]["value"]
-        overallWins = lifeTimeStats[8]["value"]
-        overallWinPercentage = lifeTimeStats[9]["value"]
-        overallKills = lifeTimeStats[10]["value"]
-        overallKD = lifeTimeStats[11]["value"]
-
-        platform = response.get("platformNameLong", "not found")
-        epicName = response.get("epicUserHandle", "not found")
-
+        print("squad finished")
     except:
-        client.send_message(context.message.channel, ("The player name {0} could not be found on the platform, {1}".format(playerName, platform)))
+        squadGamesPlayed = 0
+        squadWins = 0
+        squadWinPercentage = 0
+        squadKills = 0
+        squadKD = 0
 
-    await client.send_message(context.message.channel, "{0} - {21}\n\nOverall: \nGames Played: {1}\nWins: {2}\nWin Percentage: {3}\nKills: {4}\nK/D: {5}\n\nSolo: \nGames Played: {6}\nWins: {7}\nWin Percentage: {8}%\nKills: {9}\nK/D: {10}\n\nDuo: \nGames Played: {11}\nWins: {12}\nWin Percentage: {13}%\nKills: {14}\nK/D: {15}\n\nSquad: \nGames Played: {16}\nWins: {17}\nWin Percentage: {18}\nKills: {19}\nK/D: {20}".format(epicName, overallGamesPlayed, overallWins, overallWinPercentage, overallKills, overallKD, soloGamesPlayed, soloWins, soloWinPercentage, soloKills, soloKD, duoGamesPlayed, duoWins, duoWinPercentage, duoKills, duoKD, squadGamesPlayed, squadWins, squadWinPercentage, squadKills, squadKD, platform))
+    platformName = response.get("platformNameLong", "not found")
+    epicName = response.get("epicUserHandle", "not found")
+
+    await client.send_message(context.message.channel, "{0} - {21}\n\nOverall: \nGames Played: {1}\nWins: {2}\nWin Percentage: {3}\nKills: {4}\nK/D: {5}\n\nSolo: \nGames Played: {6}\nWins: {7}\nWin Percentage: {8}%\nKills: {9}\nK/D: {10}\n\nDuo: \nGames Played: {11}\nWins: {12}\nWin Percentage: {13}%\nKills: {14}\nK/D: {15}\n\nSquad: \nGames Played: {16}\nWins: {17}\nWin Percentage: {18}\nKills: {19}\nK/D: {20}".format(epicName, overallGamesPlayed, overallWins, overallWinPercentage, overallKills, overallKD, soloGamesPlayed, soloWins, soloWinPercentage, soloKills, soloKD, duoGamesPlayed, duoWins, duoWinPercentage, duoKills, duoKD, squadGamesPlayed, squadWins, squadWinPercentage, squadKills, squadKD, platformName))
 
 
 async def print_servers():
@@ -276,9 +303,9 @@ async def print_servers():
         await asyncio.sleep(259200)
 
 
-@client.event
-async def on_command_error(exception, context):
-    await client.send_message(context.message.channel, exception)
+#@client.event
+#async def on_command_error(exception, context):
+#    await client.send_message(context.message.channel, exception)
 
 
 
