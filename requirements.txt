@@ -2,4 +2,3 @@ discord
 asyncio
 requests
 psycopg2
-soundcloud
