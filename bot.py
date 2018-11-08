@@ -8,8 +8,7 @@
 # Copyright:   (c) troyc 2018
 # Licence:     <your licence>
 #-------------------------------------------------------------------------------
-from discord.ext.commands import Bot
-import discord
+from discord.ext import commands
 import random
 import requests
 import os
@@ -24,8 +23,13 @@ WEATHER_API_KEY = os.environ["WEATHER_API_KEY"]
 DICTIONARY_APP_KEY = os.environ["DICTIONARY_APP_KEY"]
 DICTIONARY_APP_ID = os.environ["DICTIONARY_APP_ID"]
 TRN_API_KEY = os.environ["TRN_API_KEY"]
+DATABASE_HOST = os.environ["DATABASE_HOST"]
+DATABASE_NAME = os.environ["DATABASE_NAME"]
+DATABASE_PASSWORD = os.environ["DATABASE_PASSWORD"]
+DATABASE_USER = os.environ["DATABASE_USER"]
+
 BOT_PREFIX = ("d!","D!")
-client = Bot(command_prefix = BOT_PREFIX,  case_insensitive = True)
+client = commands.Bot(command_prefix = BOT_PREFIX,  case_insensitive = True)
 
 
 @client.command(name = "8ball",
@@ -33,7 +37,7 @@ client = Bot(command_prefix = BOT_PREFIX,  case_insensitive = True)
                 brief = "d!8ball",
                 aliases = ["eightball"],
                 pass_context = True)
-async def eight_ball(context):
+async def eight_ball(ctx):
     possible_answers = [
     "It is certain",
     "It is decidedly so",
@@ -55,19 +59,20 @@ async def eight_ball(context):
     "My sources say no",
     "Outlook not so good",
     "Very doubtful"]
-    await client.say(context.message.author.mention + ", " + random.choice(possible_answers))
+    await client.send_message(ctx.message.channel, ctx.message.author.mention + ", " + random.choice(possible_answers))
 
 
 @client.command(name = "sqauare number",
                 description = "Squares a number that is given",
                 brief = "d!square [number]",
-                aliases = ["squared", "square"])
-async def square(number):
+                aliases = ["squared", "square"],
+                pass_context = True)
+async def square(ctx, number):
     try:
         squared_number = int(number) * int(number)
-        await client.say(str(number) + " squared is " + str(squared_number))
+        await client.send_message(ctx.message.channel, str(number) + " squared is " + str(squared_number))
     except:
-        await client.say("That is not supported")
+        await client.send_message(ctx.message.channel, "That is not supported")
 
 
 #Clears a channel
@@ -76,14 +81,14 @@ async def square(number):
                 brief = "d!clear [channel name] [num of msgs]",
                 aliases = ["clear"],
                 pass_context = True)
-async def clearChannel(context, channel: discord.Channel, number, *rubbish):
-    if (context.message.author.permissions_in(channel).administrator):
+async def clearChannel(ctx, channel: discord.Channel, number, *rubbish):
+    if (ctx.message.author.permissions_in(channel).administrator):
         try:
             print("1")
             clearNumber = int(number) + 1
-            if channel != context.message.channel:
+            if channel != ctx.message.channel:
               clearNumber -= 1
-              await client.send_message(context.message.channel, "Clearing messages...")
+              await client.send_message(ctx.message.channel, "Clearing messages...")
             print("2")
 
             async for msg in client.logs_from(channel):
@@ -96,7 +101,7 @@ async def clearChannel(context, channel: discord.Channel, number, *rubbish):
                 await client.delete_message(msg)
                 print("successful delete")
         except:
-            await client.send_message(context.message.channel, "Clearing messages...")
+            await client.send_message(ctx.message.channel, "Clearing messages...")
             async for msg in client.logs_from(channel):
                 await client.delete_message(msg)
     else:
@@ -107,68 +112,48 @@ async def clearChannel(context, channel: discord.Channel, number, *rubbish):
                 brief = "d!rolldice [number of sides]",
                 aliases = ["rolldice"],
                 pass_context = True)
-async def diceRoll(context, numOfSides, *rubbish):
+async def diceRoll(ctx, numOfSides, *rubbish):
     if numOfSides > 9223372036854775807:
-        await client.send_message(context.message.channel, ("Sorry I do not have the means to roll a die with " + str(numOfSides) + " sides"))
+        await client.send_message(ctx.message.channel, ("Sorry I do not have the means to roll a die with " + str(numOfSides) + " sides"))
         return
     try:
         numOfSides = int(numOfSides)
     except:
-        client.send_message(context.message.channel, "I can not roll a die with \"" + numOfSides + "\" sides" )
+        client.send_message(ctx.message.channel, "I can not roll a die with \"" + numOfSides + "\" sides" )
         return
     possibleResponses = [" is your lucky number", " is the number that I have rolled", " comes out on top"]
     randomNumber = random.choice(range(numOfSides))
-    await client.send_message(context.message.channel, (str(randomNumber) + random.choice(possibleResponses)))
+    await client.send_message(ctx.message.channel, (str(randomNumber) + random.choice(possibleResponses)))
 
 
 @client.command(name = "weather",
             description = "Tells you the weather in a given city",
             brief = "d!weather [city]",
             pass_context = True)
-async def weather(context, cityName, *rubbish):
+async def weather(ctx, cityName, *rubbish):
     r = requests.get("http://api.openweathermap.org/data/2.5/weather?q={0}&APPID={1}&units=metric".format(cityName, WEATHER_API_KEY))
     response = r.json()
     try:
         weather = response["weather"][0]["main"]
     except:
-        client.send_message(context.message.channel, ("I could not find a city with the name " + cityName))
+        client.send_message(ctx.message.channel, ("I could not find a city with the name " + cityName))
         return
     tempC = response["main"]["temp"]
     tempF = "{0:.1f}".format(float(tempC) / (5/9) + 32)
     print(weather, tempC, tempF)
-    await client.send_message(context.message.channel, ("Weather: " + str(weather) + "\nTemperature in Celsius: " + str(tempC) + "\nTemperature in Fahrenheit: " + str(tempF)))
-
-
-#@client.command(name = "givepoint",
-#                description = "Gives you one point",
-#                brief = "d!give",
-#                aliases = ["give"],
-#                pass_context = True)
-#async def givePoint(context):
-#    author = context.message.author
-#    with open("pointFile", "rb") as file:
-#        pointList = pickle.load(file)
-#    try:
-#        pointList[author.id] += 1
-#    except:
-#        pointList[author.id] = 1
-#    with open("pointFile", "wb") as file:
-#            pickle.dump(pointList,file)
-#    with open("pointFile", "rb") as file:
-#        pointList = pickle.load(file)
-#        await client.send_message(context.message.channel, ("{0} you know have {1} points".format(author.mention, pointList[author.id])))
+    await client.send_message(ctx.message.channel, ("Weather: " + str(weather) + "\nTemperature in Celsius: " + str(tempC) + "\nTemperature in Fahrenheit: " + str(tempF)))
 
 
 @client.command(name = "ping",
                 description = "Returns the ping",
                 brief = "d!ping",
                 pass_context = True)
-async def ping(context):
+async def ping(ctx):
     t1 = time.perf_counter()
-    await client.send_typing(context. message.channel)
+    await client.send_typing(ctx. message.channel)
     t2 = time.perf_counter()
     pingTime = round(t2-t1, 4)
-    await client.send_message(context.message.channel, ("Pong: {0}ms".format(pingTime)))
+    await client.send_message(ctx.message.channel, ("Pong: {0}ms".format(pingTime)))
 
 
 @client.command(name = "google",
@@ -176,7 +161,7 @@ async def ping(context):
                 brief = "d!google [searchTerm]",
                 aliases = ["search"],
                 pass_context = True)
-async def google(context, *searchTerm):
+async def google(ctx, *searchTerm):
     newSearchTerm = ""
     for character in searchTerm:
         if character == " ":
@@ -191,7 +176,7 @@ async def google(context, *searchTerm):
     except:
         msg = "Sorry that search term returned 0 results"
         return
-    await client.send_message(context.message.channel, msg)
+    await client.send_message(ctx.message.channel, msg)
 
 
 @client.command(name = "define",
@@ -199,32 +184,32 @@ async def google(context, *searchTerm):
                 brief = "d!define [searchWord]",
                 aliases = ["dictionary", "definition"],
                 pass_context = True)
-async def dictionary(context, searchWord):
+async def dictionary(ctx, searchWord):
     language = 'en'
     r = requests.get('https://od-api.oxforddictionaries.com:443/api/v1/inflections/' + language + '/' + searchWord.lower(), headers = {'app_id': DICTIONARY_APP_ID, 'app_key': DICTIONARY_APP_KEY})
     try:
         response = r.json()
     except:
-        await client.send_message(context.message.channel, "Sorry no entries of the word {0} could be found".format(searchWord))
+        await client.send_message(ctx.message.channel, "Sorry no entries of the word {0} could be found".format(searchWord))
         return
     baseword = response["results"][0]["lexicalEntries"][0]["inflectionOf"][0]["id"]
     r = requests.get('https://od-api.oxforddictionaries.com:443/api/v1/entries/' + language + '/' + baseword, headers = {'app_id': DICTIONARY_APP_ID, 'app_key': DICTIONARY_APP_KEY})
     response = r.json()
     definition = response["results"][0]["lexicalEntries"][0]["entries"][0]["senses"][0]["definitions"][0]
-    await client.send_message(context.message.channel, (baseword + ", " + definition))
+    await client.send_message(ctx.message.channel, (baseword + ", " + definition))
 
 
 @client.command(name = "fortnite_stats",
                 description = "Gives a wide range of stats.\nCredit: Fortnite Tracker, https://fortnitetracker.com/",
                 brief = "d!fortnite [platform] [playerName]",
                 pass_context = True)
-async def fortniteStats(context, platform, playerName):
+async def fortniteStats(ctx, platform, playerName):
     r = requests.get("https://api.fortnitetracker.com/v1/profile/{0}/{1}".format(platform.lower(), playerName), headers = {"TRN-Api-Key": TRN_API_KEY})
 
     try:
             response = r.json()
     except:
-        client.send_message(context.message.channel, ("Sorry the platform {0} is not recognized".format(platform)))
+        client.send_message(ctx.message.channel, ("Sorry the platform {0} is not recognized".format(platform)))
         return
     #p2 = solo
     #p10 = duo
@@ -239,7 +224,7 @@ async def fortniteStats(context, platform, playerName):
         overallKD = lifeTimeStats[11]["value"]
         print("overall finished")
     except:
-        await client.send_message("The player {0} could either not be found on the platform {1} or has not played a game".format(platformName, platform))
+        await client.send_message(ctx.message.channel, "The player {0} could either not be found on the platform {1} or has not played a game".format(platformName, platform))
         return
 
     try:
@@ -290,7 +275,7 @@ async def fortniteStats(context, platform, playerName):
     platformName = response.get("platformNameLong", "not found")
     epicName = response.get("epicUserHandle", "not found")
 
-    await client.send_message(context.message.channel, "{0} - {21}\n\nOverall: \nGames Played: {1}\nWins: {2}\nWin Percentage: {3}\nKills: {4}\nK/D: {5}\n\nSolo: \nGames Played: {6}\nWins: {7}\nWin Percentage: {8}%\nKills: {9}\nK/D: {10}\n\nDuo: \nGames Played: {11}\nWins: {12}\nWin Percentage: {13}%\nKills: {14}\nK/D: {15}\n\nSquad: \nGames Played: {16}\nWins: {17}\nWin Percentage: {18}\nKills: {19}\nK/D: {20}".format(epicName, overallGamesPlayed, overallWins, overallWinPercentage, overallKills, overallKD, soloGamesPlayed, soloWins, soloWinPercentage, soloKills, soloKD, duoGamesPlayed, duoWins, duoWinPercentage, duoKills, duoKD, squadGamesPlayed, squadWins, squadWinPercentage, squadKills, squadKD, platformName))
+    await client.send_message(ctx.message.channel, "{0} - {21}\n\nOverall: \nGames Played: {1}\nWins: {2}\nWin Percentage: {3}\nKills: {4}\nK/D: {5}\n\nSolo: \nGames Played: {6}\nWins: {7}\nWin Percentage: {8}%\nKills: {9}\nK/D: {10}\n\nDuo: \nGames Played: {11}\nWins: {12}\nWin Percentage: {13}%\nKills: {14}\nK/D: {15}\n\nSquad: \nGames Played: {16}\nWins: {17}\nWin Percentage: {18}\nKills: {19}\nK/D: {20}".format(epicName, overallGamesPlayed, overallWins, overallWinPercentage, overallKills, overallKD, soloGamesPlayed, soloWins, soloWinPercentage, soloKills, soloKD, duoGamesPlayed, duoWins, duoWinPercentage, duoKills, duoKD, squadGamesPlayed, squadWins, squadWinPercentage, squadKills, squadKD, platformName))
 
 
 async def print_servers():
@@ -303,9 +288,10 @@ async def print_servers():
         await asyncio.sleep(259200)
 
 
-#@client.event
-#async def on_command_error(exception, context):
-#    await client.send_message(context.message.channel, exception)
+@client.event
+async def on_command_error(event, ctx, *args, **kwargs):
+    if isinstance(event, commands.CommandNotFound):
+        await client.send_message(ctx.message.channel, event)
 
 
 
@@ -315,13 +301,6 @@ async def on_ready():
     print(client.user.name)
     print(client.user.id)
     print('------')
-
-    #try:
-    #    with open("pointFile", "rb") as file:
-    #        i = 0
-    #except:
-    #    with open("pointFile", "wb") as file:
-    #        pickle.dump({},file)
 
     await client.change_presence(game=discord.Game(name="d!help", type=0))
 
