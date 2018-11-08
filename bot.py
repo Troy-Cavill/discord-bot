@@ -9,6 +9,7 @@
 # Licence:     <your licence>
 #-------------------------------------------------------------------------------
 from discord.ext import commands
+import discord
 import random
 import requests
 import os
