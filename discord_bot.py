@@ -294,7 +294,7 @@ async def fortniteStats(ctx, platform, playerName):
 
 @client.command(name = "give",
                 description = "Give a person some of your coins",
-                brief = "d!give @[receiversName]",
+                brief = "d!give [amount] @[receiversName]",
                 pass_context = True)
 async def giveCoins(ctx, amount, *, receiver: discord.Member):
     sender = ctx.message.author
