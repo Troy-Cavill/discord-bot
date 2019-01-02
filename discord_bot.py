@@ -423,7 +423,7 @@ async def rps(ctx):
 async def checkMemberExists(channel, member):
     memberExists = coins.checkMemberExists(member.id)
     if not memberExists:
-        await client.send_message(channel, "The user {0} has not opened an account with me\nTo do so type d!start in a channel where I have access to".format(ctx.message.author.mention))
+        await client.send_message(channel, "The user {0} has not opened an account with me\nTo do so type d!start in a channel where I have access to".format(member.mention))
         return False
     else:
         return True
