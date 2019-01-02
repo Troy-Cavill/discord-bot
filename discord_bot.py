@@ -452,7 +452,7 @@ async def createMember(ctx):
         await client.send_message(channel, "{0} you have already opened an account with me".format(member.mention))
 
     coins.changeBalance(member.id, startingBalance)
-    dailyreward.changeTime(member.id, 0)
+    daily_reward.changeTime(member.id, 0)
 
 
 @client.command(name = "daily",
@@ -468,11 +468,11 @@ async def dailyReward(ctx):
     if not await checkMemberExists(channel, member):
         return
 
-    secondsPassedBetweenClaim = currentTime - dailyreward.retrieveTime(member.id)
+    secondsPassedBetweenClaim = currentTime - daily_reward.retrieveTime(member.id)
 
     if secondsPassedBetweenClaim > 86400:
         coins.changeBalance(member.id, dailyRewardAmount)
-        dailyreward.changeTime(member.id, currentTime)
+        daily_reward.changeTime(member.id, currentTime)
         await client.send_message(channel, "Daily Reward of {0} coins claimed by {1}".format(dailyRewardAmount, member.mention))
     else:
         await client.send_message(channel, "{0} you need to wait {1} hours and {2} minutes to claim your daily reward".format(member.mention, int(23 - secondsPassedBetweenClaim // 3600), int(59 - secondsPassedBetweenClaim // 60)))
