@@ -450,6 +450,7 @@ async def createMember(ctx):
 
     if checkMemberExists(channel, member):
         await client.send_message(channel, "{0} you have already opened an account with me".format(member.mention))
+        return
 
     coins.changeBalance(member.id, startingBalance)
     daily_reward.changeTime(member.id, 0)
