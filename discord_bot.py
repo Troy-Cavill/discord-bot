@@ -293,6 +293,8 @@ async def fortniteStats(ctx, platform, playerName):
 
 
 @client.command(name = "give",
+                description = "Give a person some of your coins",
+                brief = "d!give @[receiversName]",
                 pass_context = True)
 async def giveCoins(ctx, amount, *, receiver: discord.Member):
     sender = ctx.message.author
@@ -327,6 +329,8 @@ async def giveCoins(ctx, amount, *, receiver: discord.Member):
 
 
 @client.command(name = "balance",
+                description = "Check your balance",
+                brief = "d!balance",
                 pass_context = True)
 async def printBalance(ctx):
     member = ctx.message.author
@@ -338,6 +342,8 @@ async def printBalance(ctx):
 
 
 @client.command(name = "servertop",
+                description = "Returns the top 10 members with the most money in your server",
+                brief = "d!servertop",
                 pass_context = True)
 async def getServerTopBalances(ctx):
     memberIDs = []
@@ -355,6 +361,8 @@ async def getServerTopBalances(ctx):
 
 
 @client.command(name = "globaltop",
+                description = "Returns the top 10 members with the most money discord-wide",
+                brief = "d!globaltop",
                 pass_context = True)
 async def getGlobalTopBalances(ctx):
     topGlobalMembers = coins.retrieveGlobalTopBalances()
@@ -368,6 +376,8 @@ async def getGlobalTopBalances(ctx):
 
 
 @client.command(name = "rps",
+                description = "Play Rock Paper Scissors with me (the bot)",
+                brief = "d!rps",
                 pass_context = True)
 async def rps(ctx):
     player = ctx.message.author
@@ -430,6 +440,8 @@ async def checkMemberExists(channel, member):
 
 
 @client.command(name = "start",
+                description = "Opens an account with me (the bot) and enables you to spend and receive coins",
+                brief = "d!start",
                 pass_context = True)
 async def createMember(ctx):
     member = ctx.message.author
@@ -444,6 +456,8 @@ async def createMember(ctx):
 
 
 @client.command(name = "daily",
+                description = "Collects your daily coins optainable every 24 hours",
+                brief = "d!daily",
                 pass_context = True)
 async def dailyReward(ctx):
     member = ctx.message.author
