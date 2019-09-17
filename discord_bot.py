@@ -241,7 +241,7 @@ async def fortniteStats(ctx, platform, playerName):
         overallKills = lifeTimeStats[10]["value"]
         overallKD = lifeTimeStats[11]["value"]
     except:
-        await client.send_message(ctx.message.channel, "The player {0} could either not be found on the platform {1} or has not played a game".format(platformName, platform))
+        await client.send_message(ctx.message.channel, "The player {0} could either not be found on the platform {1} or has not played a game".format(playerName, platform))
         return
 
     try:
