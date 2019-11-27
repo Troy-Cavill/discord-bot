@@ -20,7 +20,7 @@ import psycopg2
 import coins
 import daily_reward
 import time
-  
+
 TOKEN = os.environ["BOT_TOKEN"]
 GOOGLE_API_KEY = os.environ["GOOGLE_API_KEY"]
 WEATHER_API_KEY = os.environ["WEATHER_API_KEY"]
